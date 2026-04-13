@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitumen Extraction & Aggregate Gradation | ASTM D2172</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2/dist/chartjs-plugin-annotation.min.js"></script>
+<style>
+  :root {
+    --navy: #1a2744;
+    --gold: #c9a84c;
+    --bg: #f5f7fa;
+    --white: #ffffff;
+    --red: #dc2626;
+    --green: #16a34a;
+    --border: #d1d5db;
+    --text: #1f2937;
+    --text-light: #6b7280;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+  body.ar { font-family: 'Cairo', Arial, sans-serif; }
+
+  .top-bar { background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; flex-wrap: wrap; gap: 8px; position: sticky; top: 0; z-index: 100; }
+  .top-bar .app-title { font-size: 15px; font-weight: 700; }
+  .top-bar .app-subtitle { font-size: 11px; opacity: 0.75; }
+  .lang-btns { display: flex; gap: 6px; align-items: center; }
+  .lang-btn { padding: 5px 14px; border-radius: 4px; border: 2px solid var(--gold); background: transparent; color: #fff; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+  .lang-btn.active { background: var(--gold); color: var(--navy); }
+  .lang-btn:hover:not(.active) { background: rgba(201,168,76,0.2); }
+
+  .tab-bar { background: var(--white); border-bottom: 3px solid var(--navy); display: flex; overflow-x: auto; position: sticky; top: 57px; z-index: 99; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+  .tab-btn { padding: 13px 22px; border: none; background: transparent; color: var(--text-light); cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap; transition: all 0.2s; border-bottom: 3px solid transparent; margin-bottom: -3px; }
+  body.ar .tab-btn { font-family: 'Cairo', Arial, sans-serif; }
+  .tab-btn.active { color: var(--navy); border-bottom-color: var(--gold); background: var(--bg); }
+  .tab-btn:hover:not(.active) { background: var(--bg); color: var(--navy); }
+  .tab-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--navy); color: #fff; font-size: 11px; margin-inline-end: 7px; }
+  .tab-btn.active .tab-num { background: var(--gold); }
+
+  .content { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .card { background: var(--white); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 20px; overflow: hidden; }
+  .card-header { background: var(--navy); color: #fff; padding: 12px 18px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 18px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .form-grid { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 12px; font-weight: 600; color: var(--navy); text-transform: uppercase; letter-spacing: 0.3px; }
+  body.ar label { text-transform: none; letter-spacing: 0; font-size: 13px; }
+  input[type="text"], input[type="number"], input[type="date"], select, textarea { padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 5px; font-size: 13px; font-family: inherit; background: #fff; color: var(--text); transition: border-color 0.2s; width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--navy); }
+  input.invalid { border-color: var(--red) !important; }
+
+  .radio-group { display: flex; flex-wrap: wrap; gap: 10px; padding: 4px 0; }
+  .radio-item { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+  .radio-item input[type="radio"] { accent-color: var(--navy); width: 15px; height: 15px; }
+  .radio-item span { font-size: 13px; }
+
+  .equip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 700px) { .equip-grid { grid-template-columns: 1fr; } }
+  .equip-item { border: 1px solid var(--border); border-radius: 6px; padding: 10px; background: var(--bg); }
+  .equip-title { font-size: 11px; font-weight: 700; color: var(--navy); margin-bottom: 6px; text-transform: uppercase; }
+  body.ar .equip-title { text-transform: none; font-size: 12px; }
+  .equip-row { display: flex; gap: 8px; }
+  .equip-row input { flex: 1; }
+
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th { background: var(--navy); color: #fff; padding: 9px 10px; text-align: start; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .data-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .data-table tr:nth-child(even) td { background: var(--bg); }
+  .data-table tr:hover td { background: #eef2ff; }
+  .gold-val { color: var(--gold); font-weight: 700; font-size: 14px; }
+  .bc-row td { background: var(--navy) !important; color: #fff; font-weight: 700; }
+  .bc-row .gold-val { color: var(--gold); font-size: 18px; }
+
+  .formula-box { background: var(--navy); color: #fff; border-radius: 6px; padding: 14px 18px; font-family: 'Courier New', monospace; font-size: 13px; margin: 16px 0; }
+  .formula-box .formula-title { font-size: 11px; opacity: 0.7; margin-bottom: 6px; }
+  .formula-box .formula-line { font-size: 15px; }
+  .formula-box .formula-result { color: var(--gold); font-size: 18px; font-weight: 700; margin-top: 4px; }
+
+  .toggle-wrap { display: flex; align-items: center; gap: 10px; }
+  .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; inset: 0; background: #ccc; border-radius: 24px; cursor: pointer; transition: 0.3s; }
+  .slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+  input:checked + .slider { background: var(--green); }
+  input:checked + .slider:before { transform: translateX(20px); }
+
+  .badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-weight: 700; font-size: 14px; }
+  .badge.pass { background: #dcfce7; color: var(--green); }
+  .badge.fail { background: #fee2e2; color: var(--red); }
+
+  .sieve-input { width: 80px; padding: 5px 6px; border: 1.5px solid var(--border); border-radius: 4px; font-size: 12px; text-align: center; }
+  .sieve-input:focus { outline: none; border-color: var(--navy); }
+  .jmf-input { width: 65px; padding: 5px 6px; border: 1.5px solid var(--border); border-radius: 4px; font-size: 12px; text-align: center; }
+  .jmf-input:focus { outline: none; border-color: var(--navy); }
+  .status-pass { color: var(--green); font-weight: 700; }
+  .status-fail { color: var(--red); font-weight: 700; }
+  .status-na { color: var(--text-light); }
+
+  .chart-container { position: relative; height: 400px; background: #fff; border-radius: 6px; padding: 10px; border: 1px solid var(--border); }
+
+  .mass-check-pass { color: var(--green); font-weight: 700; }
+  .mass-check-fail { color: var(--red); font-weight: 700; }
+
+  .warning-box { background: #fff7ed; border: 1.5px solid #f59e0b; border-radius: 6px; padding: 10px 14px; color: #92400e; font-size: 13px; margin: 10px 0; display: none; }
+  .warning-box.show { display: block; }
+
+  .nav-btns { display: flex; justify-content: space-between; margin-top: 24px; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 10px 22px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+  body.ar .btn { font-family: 'Cairo', Arial, sans-serif; }
+  .btn-primary { background: var(--navy); color: #fff; }
+  .btn-primary:hover { background: #243260; }
+  .btn-gold { background: var(--gold); color: var(--navy); }
+  .btn-gold:hover { background: #b8952e; }
+  .btn-danger { background: #fee2e2; color: var(--red); border: 1px solid var(--red); }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-success { background: #dcfce7; color: var(--green); border: 1px solid var(--green); }
+  .btn-success:hover { background: var(--green); color: #fff; }
+  .btn-outline { background: #fff; color: var(--navy); border: 1.5px solid var(--navy); }
+  .btn-outline:hover { background: var(--navy); color: #fff; }
+
+  .action-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+
+  .result-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 12px 0; border-top: 1px solid var(--border); margin-top: 12px; }
+  .result-item { display: flex; flex-direction: column; gap: 4px; }
+  .result-label { font-size: 11px; font-weight: 600; color: var(--navy); text-transform: uppercase; }
+  body.ar .result-label { text-transform: none; font-size: 12px; }
+  .result-value { font-size: 20px; font-weight: 700; color: var(--gold); }
+
+  .compliance-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 16px; }
+  .compliance-card { border: 1px solid var(--border); border-radius: 6px; padding: 12px; background: var(--bg); text-align: center; }
+  .compliance-card .c-label { font-size: 11px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; }
+
+  .info-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #1e40af; margin-bottom: 14px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+  .nmas-box { display: inline-block; background: var(--navy); color: #fff; border-radius: 6px; padding: 8px 18px; font-size: 14px; font-weight: 700; }
+
+  .summary-bar { display: flex; gap: 16px; flex-wrap: wrap; background: var(--bg); border-radius: 6px; padding: 12px 16px; margin-top: 12px; align-items: center; }
+  .summary-item { display: flex; flex-direction: column; gap: 2px; }
+  .summary-item .s-label { font-size: 11px; font-weight: 600; color: var(--text-light); }
+  .summary-item .s-value { font-size: 15px; font-weight: 700; color: var(--navy); }
+
+  .env-row { display: flex; gap: 8px; align-items: center; }
+  .env-label { font-size: 12px; color: var(--text-light); align-self: center; }
+  .spec-ref-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .other-input-wrap { display: none; margin-top: 6px; }
+  .other-input-wrap.show { display: block; }
+
+  /* ═══════════════════════════════════
+     REPORT / PRINT AREA
+  ═══════════════════════════════════ */
+  #printArea { background: #fff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); margin-bottom: 20px; overflow: hidden; }
+
+  .rpt-header { background: #111; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; gap: 10px; flex-wrap: wrap; }
+  .rpt-logo { font-size: 20px; font-weight: 900; color: var(--gold); }
+  .rpt-title-center { text-align: center; flex: 1; }
+  .rpt-title-center h2 { font-size: 13px; font-weight: 800; letter-spacing: 1px; }
+  .rpt-title-center p { font-size: 10px; opacity: 0.75; margin-top: 2px; }
+  .rpt-meta { font-size: 9px; text-align: end; opacity: 0.85; line-height: 1.6; }
+
+  .rpt-section-header { background: #111; color: #fff; padding: 6px 14px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+  .rpt-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .rpt-table th { background: var(--navy); color: #fff; padding: 5px 8px; text-align: start; font-weight: 600; }
+  .rpt-table td { padding: 4px 8px; border: 1px solid var(--border); }
+  .rpt-table tr:nth-child(even) td { background: #f9fafb; }
+  .rpt-bc-row td { background: #1a2744 !important; color: #fff; font-weight: 700; }
+  .rpt-bc-row .g { color: var(--gold); }
+  .rpt-calc-line { font-family: 'Courier New', monospace; font-size: 10px; background: #f1f5f9; padding: 5px 12px; border-left: 3px solid var(--gold); margin: 5px 12px; }
+
+  .rpt-proj-table { width: 100%; border-collapse: collapse; font-size: 10px; margin: 6px 0; }
+  .rpt-proj-table td { padding: 4px 8px; border: 1px solid var(--border); }
+  .rpt-proj-table .lbl { background: var(--bg); font-weight: 600; color: var(--navy); width: 130px; }
+
+  .sig-row { display: flex; gap: 10px; flex-wrap: wrap; padding: 10px 12px; }
+  .sig-box { flex: 1; min-width: 160px; border: 1px solid var(--border); border-radius: 6px; padding: 10px; }
+  .sig-box .sig-title { font-weight: 700; font-size: 10px; margin-bottom: 6px; color: var(--navy); border-bottom: 2px solid var(--gold); padding-bottom: 3px; }
+  .sig-line { border-bottom: 1px solid #999; height: 20px; margin: 6px 0 2px; }
+  .sig-label { font-size: 9px; color: var(--text-light); }
+  .sig-full { margin: 0 12px 10px; }
+  .sig-full .sig-box { min-width: 0; }
+
+  .rpt-footer { background: var(--navy); color: #ccc; text-align: center; padding: 6px; font-size: 9px; letter-spacing: 0.4px; }
+
+  .compliance-summary-row { display: flex; font-size: 11px; }
+  .csr-cell { flex: 1; padding: 10px; text-align: center; border-inline-end: 1px solid var(--border); }
+  .csr-cell:last-child { border-inline-end: none; }
+  .csr-cell .csr-label { font-size: 9px; color: var(--text-light); margin-bottom: 3px; }
+  .csr-cell .csr-value { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .csr-cell .csr-value.gold { color: var(--gold); }
+
+  .rpt-chart-wrapper { padding: 10px 12px; }
+  .rpt-chart-wrapper .chart-container { height: 220px; padding: 6px; }
+
+  /* ═══════════════════════════════════
+     USER GUIDE MODAL
+  ═══════════════════════════════════ */
+  .guide-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+  }
+  .guide-overlay.open { display: flex; }
+  .guide-modal {
+    background: #fff;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 820px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    font-family: 'Cairo', Arial, sans-serif;
+    direction: rtl;
+  }
+  .guide-modal-header {
+    background: var(--navy);
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .guide-modal-header h2 { font-size: 16px; font-weight: 800; font-family: 'Cairo', Arial, sans-serif; }
+  .guide-close-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .guide-close-btn:hover { background: rgba(255,255,255,0.3); }
+  .guide-tabs {
+    display: flex;
+    background: #f1f5f9;
+    border-bottom: 2px solid var(--border);
+    flex-shrink: 0;
+  }
+  .guide-tab-btn {
+    flex: 1;
+    padding: 11px 16px;
+    border: none;
+    background: transparent;
+    font-family: 'Cairo', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+  }
+  .guide-tab-btn.active { color: var(--navy); border-bottom-color: var(--gold); background: #fff; }
+  .guide-tab-btn:hover:not(.active) { color: var(--navy); background: #e8edf5; }
+  .guide-body {
+    overflow-y: auto;
+    padding: 20px 24px;
+    flex: 1;
+  }
+  .guide-panel { display: none; }
+  .guide-panel.active { display: block; }
+
+  /* Guide content styles */
+  .guide-section {
+    margin-bottom: 22px;
+  }
+  .guide-section-title {
+    font-family: 'Cairo', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    background: var(--navy);
+    padding: 8px 14px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .guide-section-title .g-icon { font-size: 16px; }
+  .guide-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .guide-list li {
+    font-family: 'Cairo', Arial, sans-serif;
+    font-size: 13.5px;
+    color: var(--text);
+    padding: 7px 0 7px 0;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.7;
+  }
+  .guide-list li:last-child { border-bottom: none; }
+  .guide-bullet {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+  }
+  .guide-bullet.sq {
+    border-radius: 4px;
+    background: var(--navy);
+    color: #fff;
+    font-size: 10px;
+  }
+  .guide-note {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'Cairo', Arial, sans-serif;
+    font-size: 12.5px;
+    color: #1e40af;
+    margin-top: 8px;
+    line-height: 1.7;
+  }
+  .guide-warn {
+    background: #fff7ed;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: 'Cairo', Arial, sans-serif;
+    font-size: 12.5px;
+    color: #92400e;
+    margin-top: 8px;
+    line-height: 1.7;
+  }
+  .guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Cairo', Arial, sans-serif;
+    font-size: 12.5px;
+    margin-top: 8px;
+  }
+  .guide-table th {
+    background: var(--navy);
+    color: #fff;
+    padding: 7px 10px;
+    text-align: right;
+    font-weight: 700;
+  }
+  .guide-table td {
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    text-align: right;
+  }
+  .guide-table tr:nth-child(even) td { background: #f9fafb; }
+  .guide-formula {
+    background: var(--navy);
+    color: #fff;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    margin: 8px 0;
+    direction: ltr;
+    text-align: center;
+  }
+  .guide-formula span { color: var(--gold); font-size: 15px; font-weight: 700; }
+
+  /* ═══════════════════════════════════
+     @MEDIA PRINT
+  ═══════════════════════════════════ */
+  @media print {
+    @page { size: A4 portrait; margin: 7mm; }
+    body { font-size: 11px; background: #fff !important; }
+    .top-bar, .tab-bar, .action-bar, .nav-btns, .print-btn-row { display: none !important; }
+    .content { padding: 0 !important; max-width: 100% !important; }
+    .tab-panel { display: none !important; }
+    #tab4 { display: block !important; }
+    #tab4 > *:not(#printArea) { display: none !important; }
+    #printArea { display: block !important; box-shadow: none !important; margin: 0 !important; border-radius: 0 !important; }
+    canvas { max-width: 100% !important; }
+    #reportChart { display: block !important; height: 200px !important; }
+    .rpt-chart-wrapper { page-break-inside: avoid; }
+    .rpt-chart-wrapper .chart-container { height: 200px !important; }
+    .sig-row { page-break-inside: avoid; }
+    .rpt-section-header { background: #111 !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div>
+    <div class="app-title" data-i18n="appTitle">◆ LAB — Bitumen Extraction &amp; Aggregate Gradation</div>
+    <div class="app-subtitle" data-i18n="appSubtitle">ASTM D2172/D2172M-24 | ISO 17025 Compliant Platform</div>
+  </div>
+  <div class="lang-btns">
+    <button class="lang-btn" id="btnEn" onclick="setLang('en')">English</button>
+    <button class="lang-btn" id="btnAr" onclick="setLang('ar')">العربية</button>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab(0)"><span class="tab-num">1</span><span data-i18n="tab1">Project Info</span></button>
+  <button class="tab-btn" onclick="showTab(1)"><span class="tab-num">2</span><span data-i18n="tab2">Extraction Data</span></button>
+  <button class="tab-btn" onclick="showTab(2)"><span class="tab-num">3</span><span data-i18n="tab3">Aggregate Gradation</span></button>
+  <button class="tab-btn" onclick="showTab(3)"><span class="tab-num">4</span><span data-i18n="tab4">Report &amp; Print</span></button>
+</div>
+
+<div class="content">
+
+  <!-- ACTION BAR -->
+  <div class="action-bar">
+    <button class="btn btn-danger" onclick="clearAll()">🗑 <span data-i18n="clearAll">Clear All</span></button>
+    <button class="btn btn-success" onclick="exportJSON()">💾 <span data-i18n="exportJSON">Export JSON</span></button>
+    <label class="btn btn-outline" style="cursor:pointer;">
+      📂 <span data-i18n="importJSON">Import JSON</span>
+      <input type="file" accept=".json" id="importFile" style="display:none" onchange="importJSON(event)">
+    </label>
+    <button class="btn" style="background:var(--gold);color:var(--navy);font-family:'Cairo',Arial,sans-serif;font-weight:800;" onclick="openGuide()">
+      📖 دليل المستخدم
+    </button>
+  </div>
+
+  <!-- ═══════════ USER GUIDE MODAL ═══════════ -->
+  <div class="guide-overlay" id="guideOverlay" onclick="closeGuideOutside(event)">
+    <div class="guide-modal" id="guideModal">
+      <div class="guide-modal-header">
+        <h2>📖 دليل المستخدم — منصة استخلاص البيتومين وتدرج الركام</h2>
+        <button class="guide-close-btn" onclick="closeGuide()">✕</button>
+      </div>
+      <div class="guide-tabs">
+        <button class="guide-tab-btn active" id="gTab0" onclick="switchGuideTab(0)">🖥️ طريقة استخدام المنصة</button>
+        <button class="guide-tab-btn" id="gTab1" onclick="switchGuideTab(1)">📋 ملخص المواصفات</button>
+      </div>
+      <div class="guide-body">
+
+        <!-- ══════ PANEL 0: HOW TO USE ══════ -->
+        <div class="guide-panel active" id="gPanel0">
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">1️⃣</span> التبويب الأول — بيانات المشروع</div>
+            <ul class="guide-list">
+              <li><span class="guide-bullet">1</span><span>ابدأ بملء <b>اسم المشروع</b> ورقم التقرير — هدول بيظهروا في التقرير النهائي تلقائياً.</span></li>
+              <li><span class="guide-bullet">2</span><span>اكتب <b>اسم العميل أو المقاول</b> وتواريخ التقرير والاختبار في الحقول المخصصة.</span></li>
+              <li><span class="guide-bullet">3</span><span>أدخل <b>رقم العينة وموقع أخذها</b> واسم الفني اللي أخد العينة.</span></li>
+              <li><span class="guide-bullet">4</span><span>في خانة <b>الظروف البيئية</b>: اكتب درجة الحرارة بالسيلسيوس ونسبة الرطوبة وقت الاختبار.</span></li>
+              <li><span class="guide-bullet">5</span><span>اختار <b>طريقة الاختبار</b> من الراديو بتونز: A (طرد مركزي) أو B (انعكاس حراري) أو C (فراغ) أو D (حرق).</span></li>
+              <li><span class="guide-bullet">6</span><span>حدد <b>المذيب المستخدم</b>: TCE أو nPB أو Toluene أو Methylene Chloride. لو اخترت "أخرى" هتظهر خانة تكتب فيها اسمه.</span></li>
+              <li><span class="guide-bullet">7</span><span>اختار <b>مرجع المواصفة</b>: JMF أو MOMRA أو Saudi Aramco أو مواصفة المشروع، واكتب رقم وثيقة المواصفة.</span></li>
+              <li><span class="guide-bullet">8</span><span>في قسم <b>تتبع المعدات</b>: اكتب رقم المعدة وتاريخ انتهاء المعايرة لكل جهاز — ده مطلوب لمتطلبات ISO 17025.</span></li>
+            </ul>
+            <div class="guide-note">💡 كل البيانات بتتحفظ تلقائياً في المتصفح — حتى لو قفلت الصفحة هتلاقيها موجودة لما ترجع.</div>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">2️⃣</span> التبويب الثاني — بيانات الاستخلاص</div>
+            <ul class="guide-list">
+              <li><span class="guide-bullet">1</span><span>أدخل <b>W<sub>mix</sub></b>: كتلة عينة الخلطة الابتدائية (بالغرام) — وهي الكتلة قبل الاستخلاص.</span></li>
+              <li><span class="guide-bullet">2</span><span>لو العينة فيها رطوبة، اكتب <b>نسبة الرطوبة % (W<sub>mc</sub>)</b> وفعّل مفتاح "تطبيق تصحيح الرطوبة" — المنصة هتعمل التصحيح أوتوماتيك.</span></li>
+              <li><span class="guide-bullet">3</span><span>أدخل <b>W<sub>f1</sub></b>: كتلة ورق الفلتر قبل الاستخلاص — لازم يكون متكيّف 24 ساعة عند 25 درجة.</span></li>
+              <li><span class="guide-bullet">4</span><span>أدخل <b>W<sub>f2</sub></b>: كتلة ورق الفلتر بعد الاستخلاص — المنصة هتحسب تلقائياً المواد الدقيقة على الفلتر W<sub>mm</sub>.</span></li>
+              <li><span class="guide-bullet">5</span><span>أدخل <b>W<sub>agg</sub></b>: كتلة الركام في الطشت بعد الغسيل والتجفيف — المنصة هتحسب W<sub>total</sub> أوتوماتيك.</span></li>
+              <li><span class="guide-bullet">6</span><span>نسبة البيتومين BC% بتتحسب لحظياً وبتظهر في الجدول وفي خانة "الحساب الحي" في الأسفل.</span></li>
+              <li><span class="guide-bullet">7</span><span>لو عندك <b>اختبار مكرر (Duplicate)</b>، أدخل نتيجته في الخانة المخصصة — المنصة هتحسب المتوسط تلقائياً وتنبّهك لو الفرق بيتجاوز الحد المسموح.</span></li>
+              <li><span class="guide-bullet">8</span><span>أدخل <b>نسبة البيتومين التصميمية من JMF</b> وفارق التسامح — المنصة هتحكم على المطابقة فوراً (مطابق / غير مطابق).</span></li>
+            </ul>
+            <div class="guide-warn">⚠️ لو الفرق بين الاختبار والمكرر أكتر من 0.3% هيظهر تحذير تلقائي طبقاً لـ ASTM D2172 §15.</div>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">3️⃣</span> التبويب الثالث — تدرج الركام</div>
+            <ul class="guide-list">
+              <li><span class="guide-bullet">1</span><span>في عمود <b>"الكتلة المحتجزة (g)"</b> جنب كل منخل: أدخل وزن الركام اللي اتحجز على كل منخل.</span></li>
+              <li><span class="guide-bullet">2</span><span>المنصة بتحسب تلقائياً: الكتلة التراكمية، نسبة المحتجز، ونسبة العابر لكل منخل.</span></li>
+              <li><span class="guide-bullet">3</span><span>في عمودي <b>"الحد الأدنى JMF"</b> و <b>"الحد الأعلى JMF"</b>: أدخل حدود المواصفة أو JMF لكل منخل.</span></li>
+              <li><span class="guide-bullet">4</span><span>عمود <b>"الحالة"</b> بيظهر ✓ مقبول أو ✗ مرفوض تلقائياً مقارنةً بحدود JMF.</span></li>
+              <li><span class="guide-bullet">5</span><span>شريط الملخص أسفل الجدول بيظهر: إجمالي الكتلة المدخلة، مقارنتها بـ W<sub>total</sub> من الاستخلاص، وفحص الكتلة.</span></li>
+              <li><span class="guide-bullet">6</span><span>المنصة بتحدد الـ <b>NMAS (الحجم الأقصى الاسمي للركام)</b> أوتوماتيك من أول منخل عابر منه 99% أو أكتر.</span></li>
+              <li><span class="guide-bullet">7</span><span>المنحنى البياني بيظهر في الأسفل مع خطوط حدود JMF — المحور الأفقي لوغاريتمي كما هو مطلوب في المواصفة.</span></li>
+            </ul>
+            <div class="guide-note">💡 لو مجموع الكتل على المناخل اختلف عن W<sub>total</sub> بأكتر من 1 جرام، هيظهر تحذير — راجع الأوزان المدخلة.</div>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">4️⃣</span> التبويب الرابع — التقرير والطباعة</div>
+            <ul class="guide-list">
+              <li><span class="guide-bullet">1</span><span>اضغط <b>"تحديث المعاينة"</b> عشان تشوف التقرير النهائي قبل ما تطبعه.</span></li>
+              <li><span class="guide-bullet">2</span><span>التقرير بيتضمن: بيانات المشروع، جدول الاستخلاص، جدول التدرج، المنحنى البياني، مطابقة البيتومين، وخانات التوقيع.</span></li>
+              <li><span class="guide-bullet">3</span><span>اضغط <b>"طباعة التقرير"</b> للطباعة المباشرة — التقرير اتصمم يطلع في صفحة A4 واحدة.</span></li>
+              <li><span class="guide-bullet">4</span><span>زر <b>"Export JSON"</b> في الأعلى بيحفظ كل البيانات في ملف على جهازك — تقدر تسترجعها بزر "Import JSON".</span></li>
+              <li><span class="guide-bullet">5</span><span>زر <b>"مسح الكل"</b> بيمسح كل البيانات — استخدمه بحرص لأنه مش قابل للتراجع.</span></li>
+            </ul>
+            <div class="guide-note">💡 التقرير بيُنشأ ويُخزَّن مؤقتاً في المتصفح — أي تغيير في البيانات بعد ما تفتح التبويب ده محتاج تضغط "تحديث المعاينة" تاني.</div>
+          </div>
+
+        </div><!-- end gPanel0 -->
+
+        <!-- ══════ PANEL 1: STANDARDS SUMMARY ══════ -->
+        <div class="guide-panel" id="gPanel1">
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">📌</span> نظرة عامة على الاختبار — ASTM D2172/D2172M-17</div>
+            <ul class="guide-list">
+              <li><span class="guide-bullet sq">●</span><span>الاختبار ده بيحدد <b>نسبة البيتومين (مادة الرابط الإسفلتي)</b> في الخلطات الأسفلتية وعينات الرصف — بطريقة الفرق في الكتلة.</span></li>
+              <li><span class="guide-bullet sq">●</span><span>بعد الاستخلاص، الركام المستخرج يُستخدم في تحليل المناخل طبقاً لـ <b>ASTM D5444</b>.</span></li>
+              <li><span class="guide-bullet sq">●</span><span>الاختبار ده <b>مش مناسب</b> للخلطات اللي فيها قطران (Coal Tar).</span></li>
+              <li><span class="guide-bullet sq">●</span><span>نتايج الاختبار ممكن تتأثر بعمر العينة — الخلطات القديمة بتعطي نسبة بيتومين أقل شوية.</span></li>
+            </ul>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">⚖️</span> أحجام العينات المطلوبة — Table 1 (D2172)</div>
+            <table class="guide-table">
+              <thead>
+                <tr><th>الحجم الأقصى الاسمي للركام (NMAS)</th><th>حجم المنخل</th><th>الحد الأدنى لكتلة العينة</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>4.75 مم</td><td>رقم 4</td><td>0.5 كجم</td></tr>
+                <tr><td>9.5 مم</td><td>3/8 بوصة</td><td>1 كجم</td></tr>
+                <tr><td>12.5 مم</td><td>1/2 بوصة</td><td>1.5 كجم</td></tr>
+                <tr><td>19.0 مم</td><td>3/4 بوصة</td><td>2 كجم</td></tr>
+                <tr><td>25.0 مم</td><td>1 بوصة</td><td>3 كجم</td></tr>
+                <tr><td>37.5 مم</td><td>1.5 بوصة</td><td>4 كجم</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">🧪</span> تجهيز العينة (Section 8)</div>
+            <ul class="guide-list">
+              <li><span class="guide-bullet sq">●</span><span>افصل العينة بالملعقة أو المجرفة، ابعتها وقللها للحجم المطلوب للاختبار طبقاً لـ AASHTO R47.</span></li>
+              <li><span class="guide-bullet sq">●</span><span>لو مش قادر تفصل العينة، سخّنها عند 110 ± 5 درجة مئوية لحد ما تبقى لينة بس — بس متسخنهاش أكتر من اللازم عشان متأثرش على البيتومين.</span></li>
+              <li><span class="guide-bullet sq">●</span><span>لو العينة جاية من الحقل وفيها رطوبة: <b>جففها في الفرن عند 110 ± 5 درجة</b> لحد ثبات الوزن، أو احسب نسبة الرطوبة طبقاً لـ D1461 وطبّق التصحيح.</span></li>
+              <li><span class="guide-bullet sq">●</span><span>ثبات الوزن = فقدان أقل من 0.05% بين قراءتين متتاليتين بفاصل 15 دقيقة.</span></li>
+            </ul>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">🔬</span> طرق الاستخلاص الأربعة</div>
+            <ul class="guide-list">
+              <li><span class="guide-bullet sq">A</span><span><b>الطرد المركزي (Centrifuge):</b> وضع العينة في وعاء الجهاز، إضافة المذيب وتركه يذيب البيتومين، ثم تشغيل الطرد المركزي لحد 3600 دورة/دقيقة. يتكرر مع إضافات مذيب (على الأقل 3 مرات) لحد ما يبقى المحلول فاتح اللون (straw color).</span></li>
+              <li><span class="guide-bullet sq">B</span><span><b>الانعكاس الحراري (Reflux):</b> العينة توضع في مخاريط ورق فلتر داخل إطارات معدنية، والمذيب بيتسخن ويتبخر ويرجع ينزل على العينة تدريجياً لحد ما يبقى المحلول النازل فاتح.</span></li>
+              <li><span class="guide-bullet sq">C</span><span><b>الفراغ (Vacuum):</b> إذابة البيتومين بالمذيب مع تحريك، ثم ترشيح المحلول بضخ هواء (فراغ) عبر ورق الفلتر. ممكن يُستخدم مساعد ترشيح من السيليكا الدياتومية للخلطات صعبة الترشيح.</span></li>
+              <li><span class="guide-bullet sq">D</span><span><b>القدر (Extraction Kettle):</b> العينة في سلة مثقبة داخل قدر مع مذيب، تُسخن حتى يتبخر المذيب ويرجع على العينة بشكل موزع، يتكرر لحد نقاء المحلول النازل.</span></li>
+            </ul>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">🧴</span> المذيبات المعتمدة في كل طريقة</div>
+            <table class="guide-table">
+              <thead>
+                <tr><th>الطريقة</th><th>المذيبات المسموح بها</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>A — طرد مركزي</td><td>TCE — nPB — Toluene</td></tr>
+                <tr><td>B — انعكاس حراري</td><td>TCE — nPB — Toluene</td></tr>
+                <tr><td>C — فراغ</td><td>TCE — nPB — Toluene — Methylene Chloride</td></tr>
+                <tr><td>D — قدر استخلاص</td><td>TCE — nPB — Methylene Chloride</td></tr>
+              </tbody>
+            </table>
+            <div class="guide-warn">⚠️ كل المذيبات دي سامة — لازم الشغل يكون تحت شفاط أو في منطقة تهوية كويسة. راجع Section 7 من المواصفة.</div>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">🧮</span> معادلة حساب نسبة البيتومين (Section 14)</div>
+            <div class="guide-formula">
+              BC (%) = [ (W₁ − W₂) − (W₃ + W₄) ] / (W₁ − W₂) × 100
+              <br><br>
+              <span>W₁ = كتلة العينة الكلية &nbsp;|&nbsp; W₂ = كتلة الماء في العينة</span><br>
+              <span>W₃ = كتلة الركام المستخرج &nbsp;|&nbsp; W₄ = كتلة المواد الدقيقة في المستخلص</span>
+            </div>
+            <ul class="guide-list">
+              <li><span class="guide-bullet sq">●</span><span>W₄ بتتحسب بالرماد (Ashing) أو الطرد المركزي أو الحجمي — وهي تمثّل المواد المعدنية اللي عدت مع المذيب.</span></li>
+              <li><span class="guide-bullet sq">●</span><span>لو بتستخدم حلقات فلتر بدون رماد (Ashless)، يُضاف أي زيادة في وزن الحلقة إلى W₄.</span></li>
+              <li><span class="guide-bullet sq">●</span><span>في المنصة: W<sub>mm</sub> = W<sub>f2</sub> − W<sub>f1</sub> هي تقريب عملي لـ W₄ في طريقة الفلتر.</span></li>
+            </ul>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">📊</span> دقة الاختبار — Section 15 (D2172)</div>
+            <table class="guide-table">
+              <thead>
+                <tr><th>نوع الدقة</th><th>الطريقة</th><th>الانحراف المعياري (1s)</th><th>الفرق المقبول بين نتيجتين (d2s)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td rowspan="2">داخل المختبر الواحد<br>(امتصاصية الركام &lt; 1.25%)</td><td>A (طرد مركزي)</td><td>0.21%</td><td>0.59%</td></tr>
+                <tr><td>B / C / D (الباقي)</td><td>0.19%</td><td>0.54%</td></tr>
+                <tr><td rowspan="2">بين مختبرات مختلفة<br>(امتصاصية الركام &lt; 1.25%)</td><td>A (طرد مركزي)</td><td>0.22%</td><td>0.62%</td></tr>
+                <tr><td>B / C / D (الباقي)</td><td>0.23%</td><td>0.65%</td></tr>
+              </tbody>
+            </table>
+            <div class="guide-note">💡 الأرقام دي تعني إنك لو عملت اختبار مكرر في نفس المختبر، الفرق المقبول بين النتيجتين هو 0.59% كحد أقصى للطريقة A.</div>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">🔩</span> تحليل المناخل للركام المستخرج — ASTM D5444-23</div>
+            <ul class="guide-list">
+              <li><span class="guide-bullet sq">●</span><span>الركام المستخرج من D2172 بيُستخدم مباشرة في الاختبار ده — الكتلة الكلية هي مجموع الركام الجاف + المواد الدقيقة في المستخلص.</span></li>
+              <li><span class="guide-bullet sq">●</span><span><b>الخطوة الأولى:</b> جفّف العينة عند 110 ± 5 درجة لثبات الوزن، وازنها بدقة 0.1%.</span></li>
+              <li><span class="guide-bullet sq">●</span><span><b>الخطوة الثانية:</b> اغمر الركام بالمياه مع مادة تبليل (ديترجنت) وحرّك بشكل قوي لفصل المواد الناعمة الأقل من 75 ميكرون.</span></li>
+              <li><span class="guide-bullet sq">●</span><span><b>الخطوة الثالثة:</b> صبّ مياه الغسيل على منخلين متداخلين (2.00 مم + 75 ميكرون) — كرر الغسيل لحد ما الميه تبقى صافية.</span></li>
+              <li><span class="guide-bullet sq">●</span><span><b>الخطوة الرابعة:</b> جفّف الركام الغسيل عند درجة حرارة مناسبة (مش أكتر من درجة الدمك + 5 درجة ومش أقل من 105 درجة)، وازنه.</span></li>
+              <li><span class="guide-bullet sq">●</span><span><b>الخطوة الخامسة:</b> نخّل على المناخل المطلوبة بترتيب تنازلي، وسجّل وزن كل حصة.</span></li>
+              <li><span class="guide-bullet sq">●</span><span>مجموع الأوزان لازم يتوافق مع الوزن بعد الغسيل في حدود 0.2% — وإلا فيه خطأ في القياس.</span></li>
+              <li><span class="guide-bullet sq">●</span><span>النتايج بتتحسب كـ <b>نسبة مئوية عابرة (% Passing)</b> من الكتلة الكلية — ونسبة المار من المنخل 200 بتتقرر لأقرب 0.1%.</span></li>
+            </ul>
+          </div>
+
+          <div class="guide-section">
+            <div class="guide-section-title"><span class="g-icon">⚠️</span> تنبيهات مهمة من المواصفتين</div>
+            <ul class="guide-list">
+              <li><span class="guide-bullet sq">!</span><span>الركام المستخرج بطريقة الحرق (Ignition — D6307) <b>مينفعش</b> يُستخدم في تحليل المناخل لو معامل التصحيح أكبر من 1.0، لأن الحرارة ممكن تكسر بعض حبيبات الركام.</span></li>
+              <li><span class="guide-bullet sq">!</span><span>الركام الجاف بيمص الرطوبة من الهواء بسرعة — <b>وازن العينة فوراً</b> بعد التبريد ومتفضلهاش في الهواء.</span></li>
+              <li><span class="guide-bullet sq">!</span><span>لو وزن العينة أكبر من طاقة الجهاز، ممكن تقسمها لأجزاء وتجمع الكتل قبل الحساب.</span></li>
+              <li><span class="guide-bullet sq">!</span><span>الكمية المحتجزة على أي منخل أقل من 4.75 مم ما تتعدّاش 6 كجم/م² من سطح النخل — عشان تضمن دقة النخل.</span></li>
+              <li><span class="guide-bullet sq">!</span><span>النخل الكافي = الركام الزيادة اللي بيعدي من أي منخل بعد دقيقة يدوية ما يتعداش 0.5% من الوزن الكلي.</span></li>
+            </ul>
+          </div>
+
+        </div><!-- end gPanel1 -->
+
+      </div><!-- end guide-body -->
+    </div><!-- end guide-modal -->
+  </div><!-- end guide-overlay -->
+
+  <!-- ═══════════ TAB 1: PROJECT INFO ═══════════ -->
+  <div class="tab-panel active" id="tab1">
+    <div class="card">
+      <div class="card-header">📋 <span data-i18n="tab1Header">Project Information / بيانات المشروع</span></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label data-i18n="projectName">Project Name</label>
+            <input type="text" id="f_projectName" data-save="projectName">
+          </div>
+          <div class="form-group">
+            <label data-i18n="reportNumber">Report Number</label>
+            <input type="text" id="f_reportNumber" data-save="reportNumber">
+          </div>
+          <div class="form-group">
+            <label data-i18n="clientName">Client / Contractor</label>
+            <input type="text" id="f_clientName" data-save="clientName">
+          </div>
+          <div class="form-group">
+            <label data-i18n="reportDate">Report Date</label>
+            <input type="date" id="f_reportDate" data-save="reportDate">
+          </div>
+          <div class="form-group">
+            <label data-i18n="sampleId">Sample ID</label>
+            <input type="text" id="f_sampleId" data-save="sampleId">
+          </div>
+          <div class="form-group">
+            <label data-i18n="dateOfTest">Date of Test</label>
+            <input type="date" id="f_dateOfTest" data-save="dateOfTest">
+          </div>
+          <div class="form-group">
+            <label data-i18n="mixType">Mix Type / Layer</label>
+            <input type="text" id="f_mixType" data-save="mixType">
+          </div>
+          <div class="form-group">
+            <label data-i18n="sampleLocation">Sample Location</label>
+            <input type="text" id="f_sampleLocation" data-save="sampleLocation">
+          </div>
+          <div class="form-group">
+            <label data-i18n="sampledBy">Sampled By</label>
+            <input type="text" id="f_sampledBy" data-save="sampledBy">
+          </div>
+          <div class="form-group">
+            <label data-i18n="envConditions">Environmental Conditions</label>
+            <div class="env-row">
+              <input type="number" id="f_tempC" data-save="tempC" style="width:90px" placeholder="°C">
+              <span class="env-label">°C</span>
+              <input type="number" id="f_humidity" data-save="humidity" style="width:90px" placeholder="%">
+              <span class="env-label">% RH</span>
+            </div>
+          </div>
+
+          <!-- Test Method -->
+          <div class="form-group full">
+            <label data-i18n="testMethod">Test Method (ASTM D2172)</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="testMethod" value="A" data-save="testMethod" data-group="testMethod"><span data-i18n="methodA">Method A – Centrifuge</span></label>
+              <label class="radio-item"><input type="radio" name="testMethod" value="B" data-save="testMethod" data-group="testMethod"><span data-i18n="methodB">Method B – Reflux</span></label>
+              <label class="radio-item"><input type="radio" name="testMethod" value="C" data-save="testMethod" data-group="testMethod"><span data-i18n="methodC">Method C – Vacuum</span></label>
+              <label class="radio-item"><input type="radio" name="testMethod" value="D" data-save="testMethod" data-group="testMethod"><span data-i18n="methodD">Method D – Ignition</span></label>
+            </div>
+          </div>
+
+          <!-- Solvent -->
+          <div class="form-group full">
+            <label data-i18n="solventUsed">Solvent Used</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="solvent" value="TCE" data-save="solvent" data-group="solvent"><span>TCE</span></label>
+              <label class="radio-item"><input type="radio" name="solvent" value="nPB" data-save="solvent" data-group="solvent"><span>nPB</span></label>
+              <label class="radio-item"><input type="radio" name="solvent" value="Toluene" data-save="solvent" data-group="solvent"><span>Toluene</span></label>
+              <label class="radio-item"><input type="radio" name="solvent" value="Methylene Chloride" data-save="solvent" data-group="solvent"><span>Methylene Chloride</span></label>
+              <label class="radio-item"><input type="radio" name="solvent" value="Other" data-save="solvent" data-group="solvent" onchange="updateSolventOther()"><span data-i18n="other">Other</span></label>
+            </div>
+            <div class="other-input-wrap" id="solventOtherWrap">
+              <input type="text" id="f_solventOther" data-save="solventOther" placeholder="Specify solvent / حدد المذيب">
+            </div>
+          </div>
+
+          <!-- Spec Ref -->
+          <div class="form-group full">
+            <label data-i18n="specRef">Specification Reference</label>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="specRef" value="JMF" data-save="specRef" data-group="specRef"><span>JMF</span></label>
+              <label class="radio-item"><input type="radio" name="specRef" value="MOMRA" data-save="specRef" data-group="specRef"><span>MOMRA</span></label>
+              <label class="radio-item"><input type="radio" name="specRef" value="Saudi Aramco" data-save="specRef" data-group="specRef"><span>Saudi Aramco</span></label>
+              <label class="radio-item"><input type="radio" name="specRef" value="Project Spec" data-save="specRef" data-group="specRef"><span data-i18n="projectSpec">Project Spec</span></label>
+            </div>
+            <div class="spec-ref-row" style="margin-top:8px;">
+              <label style="font-size:12px;color:var(--text-light);text-transform:none;" data-i18n="specDocNum">Spec Doc Number:</label>
+              <input type="text" id="f_specDocNum" data-save="specDocNum" style="width:200px">
+            </div>
+          </div>
+        </div>
+
+        <hr class="divider">
+        <div class="card-header" style="margin:0 -18px 14px;border-radius:0;font-size:13px;">🔬 <span data-i18n="equipTraceability">Equipment Traceability — ISO 17025</span></div>
+        <div class="equip-grid">
+          <div class="equip-item">
+            <div class="equip-title" data-i18n="balanceId">Balance / الميزان</div>
+            <div class="equip-row"><input type="text" data-save="balanceId" placeholder="ID" style="width:50%"><input type="date" data-save="balanceCalExp"></div>
+            <div style="font-size:10px;color:var(--text-light);margin-top:4px;" data-i18n="calExpiry">Cal. Expiry</div>
+          </div>
+          <div class="equip-item">
+            <div class="equip-title" data-i18n="centrifugeId">Centrifuge / Furnace</div>
+            <div class="equip-row"><input type="text" data-save="centrifugeId" placeholder="ID" style="width:50%"><input type="date" data-save="centrifugeCalExp"></div>
+            <div style="font-size:10px;color:var(--text-light);margin-top:4px;" data-i18n="calExpiry">Cal. Expiry</div>
+          </div>
+          <div class="equip-item">
+            <div class="equip-title" data-i18n="thermometerId">Thermometer</div>
+            <div class="equip-row"><input type="text" data-save="thermometerId" placeholder="ID" style="width:50%"><input type="date" data-save="thermometerCalExp"></div>
+            <div style="font-size:10px;color:var(--text-light);margin-top:4px;" data-i18n="calExpiry">Cal. Expiry</div>
+          </div>
+          <div class="equip-item">
+            <div class="equip-title" data-i18n="containerId">Container / Bowl</div>
+            <div class="equip-row"><input type="text" data-save="containerId" placeholder="ID" style="width:50%"><input type="date" data-save="containerCalExp"></div>
+            <div style="font-size:10px;color:var(--text-light);margin-top:4px;" data-i18n="calExpiry">Cal. Expiry</div>
+          </div>
+          <div class="equip-item">
+            <div class="equip-title" data-i18n="sieveShakerLabel">Sieve Shaker</div>
+            <div class="equip-row"><input type="text" data-save="sieveShakerId" placeholder="ID" style="width:50%"><input type="date" data-save="sieveShakerCalExp"></div>
+            <div style="font-size:10px;color:var(--text-light);margin-top:4px;" data-i18n="calExpiry">Cal. Expiry</div>
+          </div>
+          <div class="equip-item">
+            <div class="equip-title" data-i18n="sieveSetLabel">Sieve Set</div>
+            <div class="equip-row"><input type="text" data-save="sieveSetId" placeholder="ID" style="width:50%"><input type="date" data-save="sieveSetCalExp"></div>
+            <div style="font-size:10px;color:var(--text-light);margin-top:4px;" data-i18n="calExpiry">Cal. Expiry</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-btns"><div></div><button class="btn btn-primary" onclick="showTab(1)"><span data-i18n="nextTab">Next Tab</span> →</button></div>
+  </div>
+
+  <!-- ═══════════ TAB 2: EXTRACTION DATA ═══════════ -->
+  <div class="tab-panel" id="tab2">
+    <div class="card">
+      <div class="card-header">⚗️ <span data-i18n="extractionHeader">Extraction Data — ASTM D2172/D2172M-24 / Method</span> <span id="displayMethod" style="color:var(--gold);">—</span></div>
+      <div class="card-body">
+        <div class="info-box" data-i18n="extractionInfo">Enter all masses in grams (g). Calculated fields update automatically.</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr>
+              <th data-i18n="thParameter">Parameter</th>
+              <th data-i18n="thSymbol">Symbol</th>
+              <th data-i18n="thValue">Value (g)</th>
+              <th data-i18n="thNotes">Notes</th>
+            </tr></thead>
+            <tbody>
+              <tr>
+                <td data-i18n="r_wmix">Initial Mass of Mix Sample</td>
+                <td><b>W<sub>mix</sub></b></td>
+                <td><input type="number" class="sieve-input" id="f_wmix" data-save="wmix" min="0" step="0.01" oninput="recalcExtraction()"></td>
+                <td class="text-sm" data-i18n="n_wmix">Oven-dried before extraction</td>
+              </tr>
+              <tr>
+                <td data-i18n="r_wmc">Moisture Content (%)</td>
+                <td><b>W<sub>mc</sub></b></td>
+                <td><input type="number" class="sieve-input" id="f_wmc" data-save="wmc" min="0" max="10" step="0.01" oninput="recalcExtraction()"></td>
+                <td class="text-sm" data-i18n="n_wmc">Dry mass correction</td>
+              </tr>
+              <tr>
+                <td data-i18n="r_moistCorr">Moisture Correction Applied</td>
+                <td>—</td>
+                <td><div class="toggle-wrap"><label class="toggle"><input type="checkbox" id="f_moistCorr" data-save="moistCorr" onchange="recalcExtraction()"><span class="slider"></span></label><span id="moistCorrLabel">No</span></div></td>
+                <td class="text-sm">—</td>
+              </tr>
+              <tr>
+                <td data-i18n="r_wf1">Mass of Filter Paper (Before)</td>
+                <td><b>W<sub>f1</sub></b></td>
+                <td><input type="number" class="sieve-input" id="f_wf1" data-save="wf1" min="0" step="0.0001" oninput="recalcExtraction()"></td>
+                <td class="text-sm" data-i18n="n_wf1">Conditioned 24h at 25°C</td>
+              </tr>
+              <tr>
+                <td data-i18n="r_wf2">Mass of Filter Paper (After)</td>
+                <td><b>W<sub>f2</sub></b></td>
+                <td><input type="number" class="sieve-input" id="f_wf2" data-save="wf2" min="0" step="0.0001" oninput="recalcExtraction()"></td>
+                <td class="text-sm" data-i18n="n_wf2">Includes fines on filter</td>
+              </tr>
+              <tr>
+                <td data-i18n="r_wmm">Mineral Matter on Filter</td>
+                <td><b>W<sub>mm</sub></b> = W<sub>f2</sub>–W<sub>f1</sub></td>
+                <td><span class="gold-val" id="disp_wmm">—</span></td>
+                <td class="text-sm" data-i18n="n_auto">AUTO CALCULATED</td>
+              </tr>
+              <tr>
+                <td data-i18n="r_wagg">Aggregate Mass in Bowl</td>
+                <td><b>W<sub>agg</sub></b></td>
+                <td><input type="number" class="sieve-input" id="f_wagg" data-save="wagg" min="0" step="0.01" oninput="recalcExtraction()"></td>
+                <td class="text-sm" data-i18n="n_wagg">After solvent washing &amp; drying</td>
+              </tr>
+              <tr>
+                <td data-i18n="r_wtotal">Total Aggregate Mass</td>
+                <td><b>W<sub>total</sub></b> = W<sub>agg</sub>+W<sub>mm</sub></td>
+                <td><span class="gold-val" id="disp_wtotal">—</span></td>
+                <td class="text-sm" data-i18n="n_auto">AUTO CALCULATED</td>
+              </tr>
+              <tr class="bc-row">
+                <td data-i18n="r_bc"><b>BITUMEN CONTENT %</b></td>
+                <td><b>BC%</b></td>
+                <td><span class="gold-val" id="disp_bc" style="font-size:22px;">—</span></td>
+                <td data-i18n="n_bcAuto">(W_mix – W_total) / W_mix × 100</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="formula-box">
+          <div class="formula-title" data-i18n="formulaTitle">Live Calculation</div>
+          <div class="formula-line">BC (%) = (W<sub>mix</sub> – W<sub>total</sub>) / W<sub>mix</sub> × 100</div>
+          <div class="formula-result" id="formulaResult">= —</div>
+        </div>
+        <div class="result-row">
+          <div class="result-item">
+            <div class="result-label" data-i18n="duplicateBC">Duplicate Test Result (%)</div>
+            <input type="number" id="f_dupBC" data-save="dupBC" min="0" max="100" step="0.01" style="width:120px;font-size:18px;font-weight:700;text-align:center;border:2px solid var(--border);border-radius:5px;padding:6px;" oninput="recalcExtraction()">
+          </div>
+          <div class="result-item">
+            <div class="result-label" data-i18n="averageBC">Average BC (%)</div>
+            <div class="result-value" id="disp_avgBC">—</div>
+          </div>
+        </div>
+        <div class="warning-box" id="warn_dupDiff"><span data-i18n="warnDupDiff">⚠ Duplicate result exceeds allowable difference (ASTM D2172 §11.2)</span></div>
+        <hr class="divider">
+        <div class="compliance-row">
+          <div class="compliance-card">
+            <div class="c-label" data-i18n="designBC">Design BC from JMF (%)</div>
+            <input type="number" id="f_designBC" data-save="designBC" min="0" max="10" step="0.01" style="width:100%;font-size:20px;font-weight:700;text-align:center;border:2px solid var(--border);border-radius:5px;padding:6px;" oninput="recalcExtraction()">
+          </div>
+          <div class="compliance-card">
+            <div class="c-label" data-i18n="tolerance">JMF Tolerance (%)</div>
+            <input type="number" id="f_tolerance" data-save="tolerance" value="0.3" min="0" max="2" step="0.01" style="width:100%;font-size:20px;font-weight:700;text-align:center;border:2px solid var(--border);border-radius:5px;padding:6px;" oninput="recalcExtraction()">
+          </div>
+          <div class="compliance-card">
+            <div class="c-label" data-i18n="complianceStatus">Compliance Status</div>
+            <div id="disp_compliance" class="badge" style="margin-top:8px;">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="showTab(0)">← <span data-i18n="prevTab">Previous</span></button>
+      <button class="btn btn-primary" onclick="showTab(2)"><span data-i18n="nextTab">Next Tab</span> →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ TAB 3: AGGREGATE GRADATION ═══════════ -->
+  <div class="tab-panel" id="tab3">
+    <div class="card">
+      <div class="card-header">📊 <span data-i18n="gradationHeader">Aggregate Gradation Analysis — ASTM D5444 / Sieve Analysis</span></div>
+      <div class="card-body">
+        <div class="info-box" data-i18n="gradationInfo">Enter Mass Retained (g) for each sieve. Enter JMF limits. All other columns are auto-calculated.</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="sieveTable">
+            <thead><tr>
+              <th data-i18n="thSieve">Sieve Size</th>
+              <th data-i18n="thMassRet">Mass Retained (g)</th>
+              <th data-i18n="thCumulRet">Cumul. Retained (g)</th>
+              <th data-i18n="thPctRet">% Retained</th>
+              <th data-i18n="thPctPass">% Passing</th>
+              <th data-i18n="thJMFLower">JMF Lower (%)</th>
+              <th data-i18n="thJMFUpper">JMF Upper (%)</th>
+              <th data-i18n="thStatus">Status</th>
+            </tr></thead>
+            <tbody id="sieveBody"></tbody>
+          </table>
+        </div>
+        <div class="summary-bar">
+          <div class="summary-item"><div class="s-label" data-i18n="totalEntered">Total Mass Entered (g)</div><div class="s-value" id="disp_totalEntered">0.0</div></div>
+          <div class="summary-item"><div class="s-label" data-i18n="wtotalFromExt">W_total from Extraction (g)</div><div class="s-value" id="disp_wtotalRef">—</div></div>
+          <div class="summary-item"><div class="s-label" data-i18n="massCheck">Mass Check</div><div class="s-value" id="disp_massCheck">—</div></div>
+          <div class="summary-item"><div class="s-label" data-i18n="nmas">NMAS</div><div class="nmas-box"><span id="disp_nmas">—</span></div></div>
+        </div>
+        <div class="warning-box" id="warn_massMismatch"><span data-i18n="warnMassMismatch">⚠ Total sieve mass does not match extraction aggregate mass</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">📈 <span data-i18n="gradationCurve">Gradation Curve Chart</span></div>
+      <div class="card-body">
+        <div class="chart-container"><canvas id="gradationChart"></canvas></div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="showTab(1)">← <span data-i18n="prevTab">Previous</span></button>
+      <button class="btn btn-primary" onclick="showTab(3)"><span data-i18n="nextTab">Next Tab</span> →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ TAB 4: REPORT & PRINT ═══════════ -->
+  <div class="tab-panel" id="tab4">
+    <div class="print-btn-row" style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="btn btn-gold" style="font-size:16px;padding:12px 28px;" onclick="buildReport();window.print()">🖨 <span data-i18n="printReport">Print Report</span></button>
+      <button class="btn btn-outline" onclick="buildReport()">🔄 <span data-i18n="refreshReport">Refresh Preview</span></button>
+    </div>
+    <div id="printArea">
+      <div style="padding:60px;text-align:center;color:var(--text-light);">
+        <div style="font-size:40px;margin-bottom:10px;">📋</div>
+        <div data-i18n="reportPlaceholder">Click "Refresh Preview" to generate the report.</div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="btn btn-outline" onclick="showTab(2)">← <span data-i18n="prevTab">Previous</span></button>
+      <div></div>
+    </div>
+  </div>
+
+</div><!-- end .content -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// REGISTER ANNOTATION PLUGIN
+// ═══════════════════════════════════════════════════════════
+if (window['chartjs-plugin-annotation']) {
+  Chart.register(window['chartjs-plugin-annotation']);
+}
+
+// ═══════════════════════════════════════════════════════════
+// ESCAPE HELPER (FIX 7)
+// ═══════════════════════════════════════════════════════════
+function esc(str) {
+  if (str === null || str === undefined || str === '') return '—';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// ═══════════════════════════════════════════════════════════
+// BILINGUAL STRINGS
+// ═══════════════════════════════════════════════════════════
+const LANG = {
+  en: {
+    appTitle:'◆ LAB — Bitumen Extraction & Aggregate Gradation',
+    appSubtitle:'ASTM D2172/D2172M-24 | ISO 17025 Compliant Platform',
+    tab1:'Project Info', tab2:'Extraction Data', tab3:'Aggregate Gradation', tab4:'Report & Print',
+    tab1Header:'Project Information',
+    extractionHeader:'Extraction Data — ASTM D2172/D2172M-24 / Method',
+    gradationHeader:'Aggregate Gradation Analysis — ASTM D5444',
+    gradationCurve:'Gradation Curve Chart',
+    projectName:'Project Name', reportNumber:'Report Number',
+    clientName:'Client / Contractor', reportDate:'Report Date',
+    sampleId:'Sample ID', dateOfTest:'Date of Test',
+    mixType:'Mix Type / Layer', sampleLocation:'Sample Location',
+    sampledBy:'Sampled By', envConditions:'Environmental Conditions',
+    testMethod:'Test Method (ASTM D2172)',
+    methodA:'Method A – Centrifuge', methodB:'Method B – Reflux',
+    methodC:'Method C – Vacuum', methodD:'Method D – Ignition',
+    solventUsed:'Solvent Used', other:'Other',
+    specRef:'Specification Reference', projectSpec:'Project Spec',
+    specDocNum:'Spec Doc Number:',
+    equipTraceability:'Equipment Traceability — ISO 17025',
+    balanceId:'Balance', centrifugeId:'Centrifuge / Furnace',
+    thermometerId:'Thermometer', containerId:'Container / Bowl',
+    sieveShakerLabel:'Sieve Shaker', sieveSetLabel:'Sieve Set',
+    calExpiry:'Cal. Expiry', nextTab:'Next Tab', prevTab:'Previous',
+    clearAll:'Clear All', exportJSON:'Export JSON', importJSON:'Import JSON',
+    extractionInfo:'Enter all masses in grams (g). Calculated fields update automatically.',
+    thParameter:'Parameter', thSymbol:'Symbol', thValue:'Value (g)', thNotes:'Notes',
+    r_wmix:'Initial Mass of Mix Sample', r_wmc:'Moisture Content (%)',
+    r_moistCorr:'Moisture Correction Applied', r_wf1:'Mass of Filter Paper (Before)',
+    r_wf2:'Mass of Filter Paper (After)', r_wmm:'Mineral Matter on Filter',
+    r_wagg:'Aggregate Mass in Bowl', r_wtotal:'Total Aggregate Mass',
+    r_bc:'BITUMEN CONTENT %',
+    n_wmix:'Oven-dried before extraction', n_wmc:'Dry mass correction',
+    n_wf1:'Conditioned 24h at 25°C', n_wf2:'Includes fines on filter',
+    n_wagg:'After solvent washing & drying', n_auto:'AUTO CALCULATED',
+    n_bcAuto:'(W_mix – W_total) / W_mix × 100',
+    formulaTitle:'Live Calculation',
+    duplicateBC:'Duplicate Test Result (%)', averageBC:'Average BC (%)',
+    designBC:'Design BC from JMF (%)', tolerance:'JMF Tolerance (%)',
+    complianceStatus:'Compliance Status', yes:'Yes', no:'No',
+    gradationInfo:'Enter Mass Retained (g) for each sieve. Enter JMF limits.',
+    thSieve:'Sieve Size', thMassRet:'Mass Retained (g)',
+    thCumulRet:'Cumul. Retained (g)', thPctRet:'% Retained',
+    thPctPass:'% Passing', thJMFLower:'JMF Lower (%)',
+    thJMFUpper:'JMF Upper (%)', thStatus:'Status',
+    totalEntered:'Total Mass Entered (g)', wtotalFromExt:'W_total from Extraction (g)',
+    massCheck:'Mass Check', nmas:'NMAS',
+    printReport:'Print Report', refreshReport:'Refresh Preview',
+    reportPlaceholder:'Click "Refresh Preview" to generate the report.',
+    warnMassMismatch:'⚠ Total sieve mass does not match extraction aggregate mass',
+    warnDupDiff:'⚠ Duplicate result exceeds allowable difference (ASTM D2172 §11.2)',
+    pass:'PASS ✅', fail:'FAIL ❌',
+    matchOk:'✓ Match', matchFail:'✗ Mismatch',
+    statusPass:'✓ Pass', statusFail:'✗ Fail', statusNA:'N/A',
+  },
+  ar: {
+    appTitle:'◆ مختبر — استخلاص البيتومين وتدرج الركام',
+    appSubtitle:'ASTM D2172/D2172M-24 | منصة متوافقة مع ISO 17025',
+    tab1:'بيانات المشروع', tab2:'بيانات الاستخلاص', tab3:'تدرج الركام', tab4:'التقرير والطباعة',
+    tab1Header:'بيانات المشروع',
+    extractionHeader:'بيانات الاستخلاص — ASTM D2172/D2172M-24 / الطريقة',
+    gradationHeader:'تحليل تدرج الركام — ASTM D5444',
+    gradationCurve:'منحنى التدرج',
+    projectName:'اسم المشروع', reportNumber:'رقم التقرير',
+    clientName:'اسم العميل أو المقاول', reportDate:'تاريخ التقرير',
+    sampleId:'رقم العينة', dateOfTest:'تاريخ الاختبار',
+    mixType:'نوع الخلطة والطبقة', sampleLocation:'موقع أخذ العينة',
+    sampledBy:'اسم من أخذ العينة', envConditions:'الظروف البيئية',
+    testMethod:'طريقة الاختبار (ASTM D2172)',
+    methodA:'الطريقة أ – الطرد المركزي', methodB:'الطريقة ب – الانعكاس الحراري',
+    methodC:'الطريقة ج – الفراغ', methodD:'الطريقة د – الحرق',
+    solventUsed:'المذيب المستخدم', other:'أخرى',
+    specRef:'مرجع المواصفة', projectSpec:'مواصفة المشروع',
+    specDocNum:'رقم وثيقة المواصفة:',
+    equipTraceability:'تتبع المعدات — ISO 17025',
+    balanceId:'الميزان', centrifugeId:'الطرد المركزي / الفرن',
+    thermometerId:'الترمومتر', containerId:'الإناء / الطشت',
+    sieveShakerLabel:'هزاز المناخل', sieveSetLabel:'طقم المناخل',
+    calExpiry:'انتهاء المعايرة', nextTab:'التبويب التالي', prevTab:'السابق',
+    clearAll:'مسح الكل', exportJSON:'تصدير JSON', importJSON:'استيراد JSON',
+    extractionInfo:'أدخل جميع الكتل بالغرام. تُحسب الحقول تلقائياً.',
+    thParameter:'المعامل', thSymbol:'الرمز', thValue:'القيمة (g)', thNotes:'ملاحظات',
+    r_wmix:'كتلة عينة الخلطة الابتدائية', r_wmc:'محتوى الرطوبة (%)',
+    r_moistCorr:'تطبيق تصحيح الرطوبة', r_wf1:'كتلة ورق الفلتر قبل',
+    r_wf2:'كتلة ورق الفلتر بعد', r_wmm:'المواد الدقيقة على الفلتر',
+    r_wagg:'كتلة الركام في الطشت', r_wtotal:'إجمالي كتلة الركام',
+    r_bc:'نسبة البيتومين %',
+    n_wmix:'مجفف بالفرن قبل الاستخلاص', n_wmc:'تصحيح الكتلة الجافة',
+    n_wf1:'مشروط 24 ساعة عند 25°م', n_wf2:'يشمل المواد الدقيقة على الفلتر',
+    n_wagg:'بعد الغسيل بالمذيب والتجفيف', n_auto:'محسوب تلقائياً',
+    n_bcAuto:'(W_mix – W_total) / W_mix × 100',
+    formulaTitle:'الحساب الحي',
+    duplicateBC:'نتيجة الاختبار المكرر (%)', averageBC:'متوسط نسبة البيتومين (%)',
+    designBC:'نسبة البيتومين التصميمية من JMF (%)', tolerance:'فارق التسامح (%)',
+    complianceStatus:'حالة المطابقة', yes:'نعم', no:'لا',
+    gradationInfo:'أدخل الكتلة المحتجزة لكل منخل وحدود JMF.',
+    thSieve:'حجم المنخل', thMassRet:'الكتلة المحتجزة (g)',
+    thCumulRet:'الكتلة التراكمية (g)', thPctRet:'% المحتجز',
+    thPctPass:'% العابر', thJMFLower:'الحد الأدنى JMF (%)',
+    thJMFUpper:'الحد الأعلى JMF (%)', thStatus:'الحالة',
+    totalEntered:'إجمالي الكتلة المدخلة (g)', wtotalFromExt:'W_total من الاستخلاص (g)',
+    massCheck:'فحص الكتلة', nmas:'الحجم الأقصى الاسمي',
+    printReport:'طباعة التقرير', refreshReport:'تحديث المعاينة',
+    reportPlaceholder:'انقر على "تحديث المعاينة" لإنشاء التقرير.',
+    warnMassMismatch:'⚠ مجموع كتل المناخل لا يتطابق مع كتلة الركام من الاستخلاص',
+    warnDupDiff:'⚠ نتيجة التكرار تتجاوز الفارق المسموح به (ASTM D2172 §11.2)',
+    pass:'مطابق ✅', fail:'غير مطابق ❌',
+    matchOk:'✓ متطابق', matchFail:'✗ غير متطابق',
+    statusPass:'✓ مقبول', statusFail:'✗ مرفوض', statusNA:'لا ينطبق',
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let currentLang = 'en';
+let currentTab  = 0;
+let gradationChart = null;
+window._reportChartInstance = null;
+
+const SIEVES = [
+  { label:'1"',   mm:25.400 },
+  { label:'3/4"', mm:19.000 },
+  { label:'1/2"', mm:12.500 },
+  { label:'3/8"', mm:9.500  },
+  { label:'#4',   mm:4.750  },
+  { label:'#10',  mm:2.000  },
+  { label:'#40',  mm:0.425  },
+  { label:'#80',  mm:0.180  },
+  { label:'#200', mm:0.075  },
+  { label:'Pan',  mm:0      }
+];
+
+// ═══════════════════════════════════════════════════════════
+// LANGUAGE
+// ═══════════════════════════════════════════════════════════
+function t(key) { return LANG[currentLang][key] || LANG.en[key] || key; }
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('bitumen_lang', lang);
+  document.documentElement.setAttribute('lang', lang);
+  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+  document.body.classList.toggle('ar', lang === 'ar');
+  document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+  document.getElementById('btnAr').classList.toggle('active', lang === 'ar');
+  applyTranslations();
+  updateMoistCorrLabel();
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (key && LANG[currentLang][key] !== undefined) el.textContent = LANG[currentLang][key];
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════
+function showTab(idx) {
+  currentTab = idx;
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  if (idx === 2) setTimeout(() => updateChart(), 120);
+  if (idx === 3) buildReport();
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════════════════════
+// PERSISTENCE
+// ═══════════════════════════════════════════════════════════
+function saveAll() {
+  document.querySelectorAll('[data-save]').forEach(el => {
+    const k = 'bitumen_' + el.getAttribute('data-save');
+    if (el.type === 'checkbox') localStorage.setItem(k, el.checked ? '1' : '0');
+    else if (el.type === 'radio') { /* handled by data-group */ }
+    else localStorage.setItem(k, el.value);
+  });
+}
+
+function loadAll() {
+  document.querySelectorAll('[data-save]').forEach(el => {
+    const k = 'bitumen_' + el.getAttribute('data-save');
+    const v = localStorage.getItem(k);
+    if (v === null) return;
+    if (el.type === 'checkbox') el.checked = v === '1';
+    else if (el.type !== 'radio') el.value = v;
+  });
+}
+
+// FIX 4 — Radio save/load
+function setupRadioSave() {
+  document.querySelectorAll('input[type="radio"]').forEach(r => {
+    r.addEventListener('change', () => {
+      if (r.dataset.group) localStorage.setItem('bitumen_' + r.dataset.group, r.value);
+      if (r.name === 'testMethod') updateMethodDisplay();
+      if (r.name === 'solvent') updateSolventOther();
+    });
+  });
+}
+
+function loadRadios() {
+  document.querySelectorAll('input[type="radio"]').forEach(r => {
+    if (r.dataset.group) {
+      const saved = localStorage.getItem('bitumen_' + r.dataset.group);
+      if (saved && r.value === saved) r.checked = true;
+    }
+  });
+}
+
+// FIX 5 — Sieve save/load
+function loadSieveInputs() {
+  SIEVES.forEach((sv, i) => {
+    ['sM_', 'sJL_', 'sJU_'].forEach(pfx => {
+      const el = document.getElementById(pfx + i);
+      const saved = localStorage.getItem('bitumen_' + pfx + i);
+      if (el && saved !== null) el.value = saved;
+    });
+  });
+}
+
+function attachAutoSave() {
+  document.querySelectorAll('input:not([type="radio"]), select, textarea').forEach(el => {
+    el.addEventListener('input', saveAll);
+    el.addEventListener('change', saveAll);
+  });
+}
+
+function clearAll() {
+  if (!confirm(currentLang === 'ar' ? 'هل تريد مسح جميع البيانات؟' : 'Clear all data? This cannot be undone.')) return;
+  Object.keys(localStorage).filter(k => k.startsWith('bitumen_')).forEach(k => localStorage.removeItem(k));
+  location.reload();
+}
+
+function exportJSON() {
+  const data = {};
+  Object.keys(localStorage).filter(k => k.startsWith('bitumen_')).forEach(k => { data[k] = localStorage.getItem(k); });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'bitumen_extraction_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+
+function importJSON(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
+      location.reload();
+    } catch { alert('Invalid JSON file'); }
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════════════════
+function updateMethodDisplay() {
+  const checked = document.querySelector('input[name="testMethod"]:checked');
+  const span = document.getElementById('displayMethod');
+  if (span) span.textContent = checked ? checked.value : '—';
+}
+
+function updateSolventOther() {
+  const other = document.querySelector('input[name="solvent"][value="Other"]');
+  const wrap = document.getElementById('solventOtherWrap');
+  if (wrap) wrap.classList.toggle('show', other && other.checked);
+}
+
+function updateMoistCorrLabel() {
+  const cb = document.getElementById('f_moistCorr');
+  const lbl = document.getElementById('moistCorrLabel');
+  if (lbl && cb) lbl.textContent = cb.checked ? t('yes') : t('no');
+}
+
+function setVal(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+// ═══════════════════════════════════════════════════════════
+// BUILD SIEVE TABLE
+// ═══════════════════════════════════════════════════════════
+function buildSieveTable() {
+  const tbody = document.getElementById('sieveBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  SIEVES.forEach((s, i) => {
+    const isPan = s.mm === 0;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><b>${s.label}</b><br><span style="font-size:11px;color:var(--text-light)">${isPan ? '—' : s.mm.toFixed(3)+' mm'}</span></td>
+      <td><input type="number" class="sieve-input" id="sM_${i}" min="0" step="0.01" style="width:90px"></td>
+      <td><span class="gold-val" id="sCR_${i}">—</span></td>
+      <td><span class="gold-val" id="sPR_${i}">—</span></td>
+      <td><span class="gold-val" id="disp_pp_${i}">—</span></td>
+      <td>${isPan ? '<span style="color:var(--text-light)">—</span>' : `<input type="number" class="jmf-input" id="sJL_${i}" min="0" max="100" step="0.1" placeholder="0">`}</td>
+      <td>${isPan ? '<span style="color:var(--text-light)">—</span>' : `<input type="number" class="jmf-input" id="sJU_${i}" min="0" max="100" step="0.1" placeholder="100">`}</td>
+      <td id="sST_${i}"><span class="status-na">—</span></td>
+    `;
+    tbody.appendChild(row);
+  });
+  // Attach save + recalc
+  SIEVES.forEach((s, i) => {
+    const mEl = document.getElementById('sM_' + i);
+    const lEl = document.getElementById('sJL_' + i);
+    const uEl = document.getElementById('sJU_' + i);
+    if (mEl) mEl.addEventListener('input', () => { localStorage.setItem('bitumen_sM_' + i, mEl.value); recalcGradation(); });
+    if (lEl) lEl.addEventListener('input', () => { localStorage.setItem('bitumen_sJL_' + i, lEl.value); recalcGradation(); });
+    if (uEl) uEl.addEventListener('input', () => { localStorage.setItem('bitumen_sJU_' + i, uEl.value); recalcGradation(); });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// EXTRACTION CALCULATIONS
+// ═══════════════════════════════════════════════════════════
+function recalcExtraction() {
+  const wmix = parseFloat(document.getElementById('f_wmix').value) || 0;
+  const wmc  = parseFloat(document.getElementById('f_wmc').value)  || 0;
+  const moistCorr = document.getElementById('f_moistCorr').checked;
+  const wf1  = parseFloat(document.getElementById('f_wf1').value)  || 0;
+  const wf2  = parseFloat(document.getElementById('f_wf2').value)  || 0;
+  const wagg = parseFloat(document.getElementById('f_wagg').value) || 0;
+
+  const wmm    = Math.max(0, wf2 - wf1);
+  const wtotal = wagg + wmm;
+  let wmix_corr = wmix;
+  if (moistCorr && wmc > 0) wmix_corr = wmix / (1 + wmc / 100);
+
+  const bc = wmix_corr > 0 ? ((wmix_corr - wtotal) / wmix_corr) * 100 : 0;
+
+  const dupBC    = parseFloat(document.getElementById('f_dupBC').value);
+  const avgBC    = isNaN(dupBC) ? bc : (bc + dupBC) / 2;
+  const designBC = parseFloat(document.getElementById('f_designBC').value);
+  const tolerance= parseFloat(document.getElementById('f_tolerance').value) || 0.3;
+
+  setVal('disp_wmm',   wmm.toFixed(4) + ' g');
+  setVal('disp_wtotal', wtotal.toFixed(3) + ' g');
+
+  if (wmix_corr > 0) {
+    setVal('disp_bc', bc.toFixed(2) + '%');
+    setVal('formulaResult', `= (${wmix_corr.toFixed(1)} – ${wtotal.toFixed(1)}) / ${wmix_corr.toFixed(1)} × 100 = ${bc.toFixed(2)}%`);
+  } else {
+    setVal('disp_bc', '—'); setVal('formulaResult', '= —');
+  }
+
+  setVal('disp_avgBC', (isNaN(avgBC) || wmix_corr === 0) ? '—' : avgBC.toFixed(2) + '%');
+
+  const warnDup = document.getElementById('warn_dupDiff');
+  warnDup.classList.toggle('show', !isNaN(dupBC) && wmix_corr > 0 && Math.abs(bc - dupBC) > 0.3);
+
+  const comp = document.getElementById('disp_compliance');
+  if (!isNaN(designBC) && wmix_corr > 0) {
+    const pass = Math.abs(avgBC - designBC) <= tolerance;
+    comp.textContent = pass ? t('pass') : t('fail');
+    comp.className = 'badge ' + (pass ? 'pass' : 'fail');
+  } else { comp.textContent = '—'; comp.className = 'badge'; }
+
+  updateMoistCorrLabel();
+}
+
+// ═══════════════════════════════════════════════════════════
+// GRADATION CALCULATIONS
+// ═══════════════════════════════════════════════════════════
+function recalcGradation() {
+  const wagg   = parseFloat(document.getElementById('f_wagg').value) || 0;
+  const wf1    = parseFloat(document.getElementById('f_wf1').value)  || 0;
+  const wf2    = parseFloat(document.getElementById('f_wf2').value)  || 0;
+  const wmm    = Math.max(0, wf2 - wf1);
+  const wtotal = wagg + wmm;
+
+  let cumul = 0, totalEntered = 0;
+  const ppArr = [], loArr = [], hiArr = [];
+
+  SIEVES.forEach((s, i) => {
+    const mr = parseFloat(document.getElementById('sM_' + i)?.value) || 0;
+    totalEntered += mr; cumul += mr;
+    const pr  = wtotal > 0 ? (mr / wtotal) * 100 : 0;
+    const cpr = wtotal > 0 ? (cumul / wtotal) * 100 : 0;
+    const pp  = Math.max(0, 100 - cpr);
+    ppArr.push(pp);
+
+    const lo = parseFloat(document.getElementById('sJL_' + i)?.value);
+    const hi = parseFloat(document.getElementById('sJU_' + i)?.value);
+    loArr.push(isNaN(lo) ? null : lo);
+    hiArr.push(isNaN(hi) ? null : hi);
+
+    setText('sCR_' + i, cumul.toFixed(2));
+    setText('sPR_' + i, wtotal > 0 ? pr.toFixed(2) : '—');
+    setText('disp_pp_' + i, wtotal > 0 ? pp.toFixed(2) : '—');
+
+    const stCell = document.getElementById('sST_' + i);
+    if (stCell) {
+      if (s.mm === 0) stCell.innerHTML = `<span class="status-na">${t('statusNA')}</span>`;
+      else if (!isNaN(lo) && !isNaN(hi) && wtotal > 0) {
+        const pass = pp >= lo && pp <= hi;
+        stCell.innerHTML = pass ? `<span class="status-pass">${t('statusPass')}</span>` : `<span class="status-fail">${t('statusFail')}</span>`;
+      } else stCell.innerHTML = `<span class="status-na">—</span>`;
+    }
+  });
+
+  setText('disp_totalEntered', totalEntered.toFixed(2));
+  setText('disp_wtotalRef', wtotal > 0 ? wtotal.toFixed(3) : '—');
+
+  const diff = Math.abs(totalEntered - wtotal);
+  const massCheckEl = document.getElementById('disp_massCheck');
+  const warnEl = document.getElementById('warn_massMismatch');
+  if (wtotal > 0 && totalEntered > 0) {
+    if (diff < 1.0) { massCheckEl.innerHTML = `<span class="mass-check-pass">${t('matchOk')} (Δ${diff.toFixed(3)}g)</span>`; warnEl.classList.remove('show'); }
+    else            { massCheckEl.innerHTML = `<span class="mass-check-fail">${t('matchFail')} (Δ${diff.toFixed(2)}g)</span>`; warnEl.classList.add('show'); }
+  } else { massCheckEl.textContent = '—'; warnEl.classList.remove('show'); }
+
+  let nmas = '—';
+  for (let i = 0; i < SIEVES.length - 1; i++) {
+    if (ppArr[i] >= 99.0) { nmas = SIEVES[i].label + (SIEVES[i].mm > 0 ? ' (' + SIEVES[i].mm.toFixed(3) + ' mm)' : ''); break; }
+  }
+  setText('disp_nmas', nmas);
+  updateChart(ppArr, loArr, hiArr);
+}
+
+// ═══════════════════════════════════════════════════════════
+// GRADATION CHART (Tab 3)
+// ═══════════════════════════════════════════════════════════
+const SIEVE_MM_LOG = [25.4,19.0,12.5,9.5,4.75,2.0,0.425,0.180,0.075,0.001];
+
+function updateChart(ppArr, loArr, hiArr) {
+  if (!ppArr) {
+    ppArr = []; loArr = []; hiArr = [];
+    SIEVES.forEach((s, i) => {
+      const v = parseFloat(document.getElementById('disp_pp_' + i)?.textContent);
+      ppArr.push(isNaN(v) ? null : v);
+      loArr.push(parseFloat(document.getElementById('sJL_' + i)?.value) || null);
+      hiArr.push(parseFloat(document.getElementById('sJU_' + i)?.value) || null);
+    });
+  }
+  const ctx = document.getElementById('gradationChart');
+  if (!ctx) return;
+  const xVals = SIEVE_MM_LOG.slice(0, SIEVES.length);
+  const makePoints = arr => arr.map((v, i) => ({ x: xVals[i] || 0.001, y: v })).filter(p => p.y !== null && !isNaN(p.y));
+
+  if (gradationChart) {
+    gradationChart.data.datasets[0].data = makePoints(ppArr);
+    gradationChart.data.datasets[1].data = makePoints(hiArr);
+    gradationChart.data.datasets[2].data = makePoints(loArr);
+    gradationChart.update(); return;
+  }
+  gradationChart = new Chart(ctx, {
+    type: 'line',
+    data: { datasets: [
+      { label:'Sample Curve', data:makePoints(ppArr), borderColor:'#1a2744', backgroundColor:'rgba(26,39,68,0.08)', borderWidth:2.5, pointRadius:5, pointBackgroundColor:'#1a2744', fill:false, tension:0.3 },
+      { label:'Upper Limit',  data:makePoints(hiArr), borderColor:'#dc2626', borderWidth:1.5, borderDash:[6,4], pointRadius:3, fill:false, tension:0.3 },
+      { label:'Lower Limit',  data:makePoints(loArr), borderColor:'#2563eb', borderWidth:1.5, borderDash:[3,3], pointRadius:3, fill:false, tension:0.3 }
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      scales: {
+        x: { type:'logarithmic', min:0.05, max:30,
+          title:{ display:true, text:'Particle Size (mm)', font:{size:12} },
+          ticks:{ callback(v){ const L={25.4:'1"',19:'3/4"',12.5:'1/2"',9.5:'3/8"',4.75:'#4',2:'#10',0.425:'#40',0.18:'#80',0.075:'#200'}; return L[v]||(v>=1?v:''); }},
+          grid:{color:'#e5e7eb'}
+        },
+        y: { min:0, max:100, title:{display:true,text:'% Passing',font:{size:12}}, ticks:{stepSize:10}, grid:{color:'#e5e7eb'} }
+      },
+      plugins: {
+        legend:{ position:'top', labels:{font:{size:12}} },
+        annotation:{ annotations:{
+          line1:{ type:'line', scaleID:'x', value:4.75,  borderColor:'rgba(201,168,76,0.6)', borderWidth:1.5, borderDash:[5,3], label:{content:'#4',   display:true, position:'start', font:{size:10}} },
+          line2:{ type:'line', scaleID:'x', value:0.075, borderColor:'rgba(201,168,76,0.6)', borderWidth:1.5, borderDash:[5,3], label:{content:'#200', display:true, position:'start', font:{size:10}} }
+        }}
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// BUILD REPORT (FIX 3 + FIX 7)
+// ═══════════════════════════════════════════════════════════
+function buildReport() {
+  const v     = id => { const el=document.getElementById(id); return el?el.value:''; };
+  const disp  = id => { const el=document.getElementById(id); return el?el.textContent:'—'; };
+  const radio = name => { const el=document.querySelector(`input[name="${name}"]:checked`); return el?el.value:'—'; };
+  const solvent = radio('solvent') === 'Other' ? (v('f_solventOther') || 'Other') : radio('solvent');
+
+  // Sieve rows
+  let sieveRows = '';
+  SIEVES.forEach((s, i) => {
+    const mr = document.getElementById('sM_' + i)?.value || '—';
+    const cr = document.getElementById('sCR_' + i)?.textContent || '—';
+    const pr = document.getElementById('sPR_' + i)?.textContent || '—';
+    const pp = document.getElementById('disp_pp_' + i)?.textContent || '—';
+    const lo = document.getElementById('sJL_' + i)?.value || '—';
+    const hi = document.getElementById('sJU_' + i)?.value || '—';
+    const st = document.getElementById('sST_' + i)?.innerHTML || '—';
+    sieveRows += `<tr>
+      <td><b>${s.label}</b>${s.mm>0?'<br><small>'+s.mm.toFixed(3)+' mm</small>':''}</td>
+      <td>${esc(mr)}</td><td>${esc(cr)}</td><td>${esc(pr)}</td>
+      <td><b>${esc(pp)}</b></td><td>${esc(lo)}</td><td>${esc(hi)}</td>
+      <td>${st}</td>
+    </tr>`;
+  });
+
+  const bcVal      = disp('disp_bc');
+  const avgBCVal   = disp('disp_avgBC');
+  const designBCVal= v('f_designBC') || '—';
+  const tolVal     = v('f_tolerance') || '0.3';
+  const compVal    = document.getElementById('disp_compliance')?.textContent || '—';
+  const compStyle  = document.getElementById('disp_compliance')?.classList.contains('pass')
+    ? 'color:#16a34a;font-size:18px;font-weight:800;'
+    : 'color:#dc2626;font-size:18px;font-weight:800;';
+
+  let html = `
+  <!-- HEADER -->
+  <div class="rpt-header">
+    <div class="rpt-logo">◆ LAB</div>
+    <div class="rpt-title-center">
+      <h2>BITUMEN EXTRACTION &amp; AGGREGATE GRADATION REPORT</h2>
+      <p>Filter / Centrifuge / Ignition Method | Job Mix Formula Compliance</p>
+    </div>
+    <div class="rpt-meta">Doc No.: LAB-ASP-001 | Rev.: 01 | Page 1 of 1<br>ISO 17025:2017 / ASTM D2172/D2172M-24</div>
+  </div>
+
+  <!-- PROJECT INFO -->
+  <table class="rpt-proj-table">
+    <tr><td class="lbl">Project / Contract</td><td>${esc(v('f_projectName'))}</td><td class="lbl">Mix Type / Layer</td><td>${esc(v('f_mixType'))}</td></tr>
+    <tr><td class="lbl">Sample ID / Location</td><td>${esc(v('f_sampleId'))} / ${esc(v('f_sampleLocation'))}</td><td class="lbl">Date of Test</td><td>${esc(v('f_dateOfTest'))}</td></tr>
+    <tr><td class="lbl">Client</td><td>${esc(v('f_clientName'))}</td><td class="lbl">Report Number</td><td>${esc(v('f_reportNumber'))}</td></tr>
+    <tr><td class="lbl">Sampled By</td><td>${esc(v('f_sampledBy'))}</td><td class="lbl">Report Date</td><td>${esc(v('f_reportDate'))}</td></tr>
+    <tr><td class="lbl">Temp / Humidity</td><td>${esc(v('f_tempC'))}°C / ${esc(v('f_humidity'))}% RH</td><td class="lbl">Test Method</td><td>Method ${esc(radio('testMethod'))}</td></tr>
+    <tr><td class="lbl">Solvent</td><td>${esc(solvent)}</td><td class="lbl">Specification</td><td>${esc(radio('specRef'))} — ${esc(v('f_specDocNum'))}</td></tr>
+  </table>
+
+  <!-- SECTION 1: EXTRACTION DATA -->
+  <div class="rpt-section-header">1 — EXTRACTION DATA | ASTM D2172/D2172M-24</div>
+  <table class="rpt-table">
+    <thead><tr><th>Parameter</th><th>Symbol</th><th>Value</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Initial Mass of Mix Sample</td><td>W<sub>mix</sub></td><td>${esc(v('f_wmix'))} g</td><td>Oven-dried before extraction</td></tr>
+      <tr><td>Moisture Content</td><td>W<sub>mc</sub></td><td>${esc(v('f_wmc'))} %</td><td>Dry mass correction</td></tr>
+      <tr><td>Mass of Filter Paper (Before)</td><td>W<sub>f1</sub></td><td>${esc(v('f_wf1'))} g</td><td>Conditioned 24h at 25°C</td></tr>
+      <tr><td>Mass of Filter Paper (After)</td><td>W<sub>f2</sub></td><td>${esc(v('f_wf2'))} g</td><td>Includes fines on filter</td></tr>
+      <tr><td>Mineral Matter on Filter</td><td>W<sub>mm</sub></td><td style="color:var(--gold);font-weight:700">${disp('disp_wmm')}</td><td>AUTO CALCULATED</td></tr>
+      <tr><td>Aggregate Mass in Bowl</td><td>W<sub>agg</sub></td><td>${esc(v('f_wagg'))} g</td><td>After solvent washing &amp; drying</td></tr>
+      <tr><td>Total Aggregate Mass</td><td>W<sub>total</sub></td><td style="color:var(--gold);font-weight:700">${disp('disp_wtotal')}</td><td>AUTO CALCULATED</td></tr>
+      <tr class="rpt-bc-row"><td><b>BITUMEN CONTENT %</b></td><td><b>BC%</b></td><td class="g" style="font-size:16px;">${bcVal}</td><td>(W_mix – W_total) / W_mix × 100</td></tr>
+    </tbody>
+  </table>
+  <div class="rpt-calc-line">${document.getElementById('formulaResult')?.textContent || '—'} &nbsp;|&nbsp; Duplicate: ${esc(v('f_dupBC'))||'—'}% &nbsp;|&nbsp; <b>Average BC: ${avgBCVal}</b></div>
+
+  <!-- SECTION 2: GRADATION TABLE -->
+  <div class="rpt-section-header">2 — AGGREGATE GRADATION VS. JMF / SPECIFICATION LIMITS</div>
+  <table class="rpt-table">
+    <thead><tr><th>Sieve</th><th>Mass Ret. (g)</th><th>Cumul. Ret. (g)</th><th>% Ret.</th><th>% Passing</th><th>JMF Low</th><th>JMF High</th><th>Status</th></tr></thead>
+    <tbody>${sieveRows}</tbody>
+  </table>
+  <div style="padding:4px 12px;font-size:10px;background:var(--bg);">
+    <b>Total Entered:</b> ${disp('disp_totalEntered')} g &nbsp;|&nbsp;
+    <b>W_total (Extraction):</b> ${disp('disp_wtotalRef')} g &nbsp;|&nbsp;
+    <b>Mass Check:</b> ${document.getElementById('disp_massCheck')?.innerHTML||'—'} &nbsp;|&nbsp;
+    <b>NMAS:</b> ${disp('disp_nmas')}
+  </div>
+
+  <!-- SECTION 3: CHART -->
+  <div class="rpt-section-header">3 — GRADATION CURVE VS. DESIGN LIMITS</div>
+  <div class="rpt-chart-wrapper">
+    <div class="chart-container" style="height:200px;"><canvas id="reportChart"></canvas></div>
+  </div>
+
+  <!-- SECTION 4: COMPLIANCE -->
+  <div class="rpt-section-header">4 — BITUMEN CONTENT COMPLIANCE (JMF Tolerance: ± ${esc(tolVal)}%)</div>
+  <div class="compliance-summary-row" style="border:1px solid var(--border);">
+    <div class="csr-cell"><div class="csr-label">Actual BC (%)</div><div class="csr-value gold">${avgBCVal}</div></div>
+    <div class="csr-cell"><div class="csr-label">Design BC (%)</div><div class="csr-value">${esc(designBCVal)}%</div></div>
+    <div class="csr-cell"><div class="csr-label">Tolerance (±%)</div><div class="csr-value">± ${esc(tolVal)}%</div></div>
+    <div class="csr-cell"><div class="csr-label">Status</div><div class="csr-value" style="${compStyle}">${compVal}</div></div>
+  </div>
+  <div style="padding:5px 12px;font-size:10px;background:var(--bg);"><b>Remarks:</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+  `;
+
+  // SECTION 5: AUTHORIZATION (FIX 3)
+  html += `
+  <div class="rpt-section-header">5 — AUTHORIZATION &amp; APPROVAL</div>
+  <div class="sig-row">
+    <div class="sig-box">
+      <div class="sig-title">QUALITY MANAGER — ISO 17025:2017</div>
+      <div class="sig-label">Name</div><div class="sig-line"></div>
+      <div class="sig-label">Signature</div><div class="sig-line" style="margin-top:14px;"></div>
+      <div class="sig-label">Date</div><div class="sig-line" style="margin-top:14px;"></div>
+    </div>
+    <div class="sig-box">
+      <div class="sig-title">TECHNICAL MANAGER / TECHNICAL AUTHORITY</div>
+      <div class="sig-label">Name</div><div class="sig-line"></div>
+      <div class="sig-label">Signature</div><div class="sig-line" style="margin-top:14px;"></div>
+      <div class="sig-label">Date</div><div class="sig-line" style="margin-top:14px;"></div>
+    </div>
+  </div>
+  <div class="sig-full">
+    <div class="sig-box" style="margin:0 12px 10px;">
+      <div class="sig-title">INDEPENDENT TECHNICAL CHECK — ISO 17025 §6.2</div>
+      <div style="display:flex;gap:30px;flex-wrap:wrap;padding-top:4px;">
+        <div style="flex:1;min-width:120px;"><div class="sig-line"></div><div class="sig-label">Reviewed By / Name</div></div>
+        <div style="flex:1;min-width:120px;"><div class="sig-line"></div><div class="sig-label">Signature</div></div>
+        <div style="flex:1;min-width:80px;"><div class="sig-line"></div><div class="sig-label">Date</div></div>
+      </div>
+    </div>
+  </div>`;
+
+  // FOOTER (FIX 3)
+  html += `
+  <div class="rpt-footer">
+    This report shall not be reproduced except in full without written approval of the issuing laboratory.
+    &nbsp;|&nbsp; Doc No.: LAB-ASP-001 &nbsp;|&nbsp; Rev. 01 &nbsp;|&nbsp; ISO 17025:2017 Accredited &nbsp;|&nbsp; ASTM D2172/D2172M-24 &nbsp;|&nbsp; Page 1 of 1
+  </div>`;
+
+  document.getElementById('printArea').innerHTML = html;
+  setTimeout(() => renderReportChart(), 80);
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER REPORT CHART (FIX 2)
+// ═══════════════════════════════════════════════════════════
+function renderReportChart() {
+  const canvas = document.getElementById('reportChart');
+  if (!canvas) return;
+  if (window._reportChartInstance) { window._reportChartInstance.destroy(); window._reportChartInstance = null; }
+
+  const passing = [], jmfLow = [], jmfHigh = [];
+  SIEVES.forEach((sv, i) => {
+    passing.push(parseFloat(document.getElementById('disp_pp_' + i)?.textContent) || null);
+    jmfLow.push(parseFloat(document.getElementById('sJL_' + i)?.value) || null);
+    jmfHigh.push(parseFloat(document.getElementById('sJU_' + i)?.value) || null);
+  });
+
+  const xVals = [25.4,19.0,12.5,9.5,4.75,2.0,0.425,0.180,0.075,0.001];
+  const makePoints = arr => arr.map((v, i) => ({ x: xVals[i]||0.001, y: v })).filter(p => p.y !== null && !isNaN(p.y));
+
+  window._reportChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: { datasets: [
+      { label:'Sample Curve', data:makePoints(passing), borderColor:'#1a2744', backgroundColor:'rgba(26,39,68,0.08)', pointBackgroundColor:'#1a2744', borderWidth:2.5, pointRadius:4, tension:0.3, fill:false, spanGaps:true },
+      { label:'Upper Limit',  data:makePoints(jmfHigh), borderColor:'#dc2626', borderWidth:1.5, borderDash:[6,4], pointRadius:2, fill:false, spanGaps:true },
+      { label:'Lower Limit',  data:makePoints(jmfLow),  borderColor:'#2563eb', borderWidth:1.5, borderDash:[3,3], pointRadius:2, fill:false, spanGaps:true }
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      scales: {
+        x: { type:'logarithmic', min:0.05, max:30,
+          title:{ display:true, text:'Particle Size (mm) — Log Scale', font:{weight:'bold',size:10} },
+          ticks:{ callback(v){ const L={25.4:'1"',19:'3/4"',12.5:'1/2"',9.5:'3/8"',4.75:'#4',2:'#10',0.425:'#40',0.18:'#80',0.075:'#200'}; return L[v]||(v>=1?v:''); }},
+          grid:{color:'#e5e7eb'}
+        },
+        y: { min:0, max:100, title:{display:true,text:'Percent Passing (%)',font:{weight:'bold',size:10}}, ticks:{stepSize:10}, grid:{color:'#e5e7eb'} }
+      },
+      plugins: {
+        legend:{ position:'top', labels:{font:{size:10}} },
+        annotation:{ annotations:{
+          line1:{ type:'line', scaleID:'x', value:4.75,  borderColor:'#c9a84c', borderWidth:1.5, borderDash:[5,3], label:{content:'#4',   display:true, position:'start', font:{size:9}} },
+          line2:{ type:'line', scaleID:'x', value:0.075, borderColor:'#c9a84c', borderWidth:1.5, borderDash:[5,3], label:{content:'#200', display:true, position:'start', font:{size:9}} }
+        }}
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// BEFORE PRINT — resize chart (FIX 8)
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('beforeprint', () => {
+  if (window._reportChartInstance) window._reportChartInstance.resize();
+});
+
+// ═══════════════════════════════════════════════════════════
+// INIT (FIX 6 — CORRECT ORDER)
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  buildSieveTable();        // 1. Build dynamic sieve rows first
+  loadAll();                // 2. Load all saved text/number/date inputs
+  loadSieveInputs();        // 3. Load saved sieve + JMF values
+  loadRadios();             // 4. Load saved radio selections
+  setupRadioSave();         // 5. Attach radio change listeners
+  attachAutoSave();         // 6. Attach auto-save to static inputs
+  updateSolventOther();     // 7. Show/hide "Other solvent" field
+  const saved = localStorage.getItem('bitumen_lang') || 'en';
+  setLang(saved);           // 8. Apply saved language + translations
+  recalcExtraction();       // 9. Trigger extraction calculations
+  recalcGradation();        // 10. Trigger gradation calculations
+  updateMethodDisplay();    // 11. Update method label
+
+  // Extraction fields — also trigger gradation (for wtotal link)
+  ['f_wmix','f_wmc','f_wf1','f_wf2','f_wagg'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => { recalcExtraction(); recalcGradation(); });
+  });
+  ['f_dupBC','f_designBC','f_tolerance'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', recalcExtraction);
+  });
+  const mc = document.getElementById('f_moistCorr');
+  if (mc) mc.addEventListener('change', recalcExtraction);
+
+  // Tab click auto-build report
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.addEventListener('click', () => { if (i === 3) buildReport(); });
+  });
+});
+
+// ═══════════════════════════════════════════════════════════
+// USER GUIDE FUNCTIONS
+// ═══════════════════════════════════════════════════════════
+function openGuide() {
+  document.getElementById('guideOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeGuide() {
+  document.getElementById('guideOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeGuideOutside(e) {
+  if (e.target === document.getElementById('guideOverlay')) closeGuide();
+}
+function switchGuideTab(idx) {
+  document.querySelectorAll('.guide-tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.guide-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGuide(); });
+</script>
+</body>
+</html>
